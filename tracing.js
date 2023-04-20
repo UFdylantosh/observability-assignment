@@ -11,6 +11,8 @@ const { MongoDBInstrumentation } = require("@opentelemetry/instrumentation-mongo
 const { HttpInstrumentation } = require("@opentelemetry/instrumentation-http");
 const { registerInstrumentations } = require("@opentelemetry/instrumentation");
 
+const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
+
 //Exporter
 module.exports = (serviceName) => {
    const exporter = new ConsoleSpanExporter();
@@ -20,6 +22,7 @@ module.exports = (serviceName) => {
        }),
    });
    provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+   provider.addSpanProcessor(new SimpleSpanProcessor(new JaegerExporter(exporter)));
    provider.register();
    registerInstrumentations({
        instrumentations: [
